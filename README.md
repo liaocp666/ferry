@@ -1,6 +1,6 @@
 # Ferry - 高性能数据库同步工具
 
-[![License](https://img.shields.io/badge/license-Apache%202-g)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%20License%202.0-red)](LICENSE)
 [![Java](https://img.shields.io/badge/java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
 [![Maven](https://img.shields.io/badge/maven-3.8+-red.svg)](https://maven.apache.org/)
 
