@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <channel name="fast_sync_job">
+        <cron>0/5 * * * * ?</cron>
+        <concurrency>1</concurrency>
+        <dir>D:\test\</dir>
+
+        <task name="order_sync">
+            <syncMode>DIFF</syncMode>
+            <maxDataSize>1000</maxDataSize>
+
+            <source table="t_order" pk="order_id"/>
+
+            <stage table="sync_t_order" pk="order_id"/>
+
+            <target table="orders" pk="id"/>
+
+            <execute>
+                <insert sourceKey="order_id" stageKey="id">
+                    <sql><![CDATA[
+                            select
+                                o.order_no,
+                                o.customer_name,
+                                o.customer_phone,
+                                o.customer_address,
+                                o.product_name,
+                                o.product_code,
+                                o.quantity,
+                                o.unit_price,
+                                o.total_amount,
+                                o.order_status,
+                                o.payment_method,
+                                o.payment_status,
+                                o.shipping_address,
+                                o.shipping_method,
+                                o.tracking_number,
+                                o.remark,
+                                o.create_time,
+                                o.update_time,
+                                o.pay_time,
+                                o.ship_time
+                              from t_order o left join sync_t_order so
+                                on o.order_id = so.order_id
+                              where so.order_id is null
+                        ]]></sql>
+                </insert>
+
+                <update sourceKey="order_id" stageKey="id">
+                    <sql><![CDATA[
+                            select
+                                o.order_no,
+                                o.customer_name,
+                                o.customer_phone,
+                                o.customer_address,
+                                o.product_name,
+                                o.product_code,
+                                o.quantity,
+                                o.unit_price,
+                                o.total_amount,
+                                o.order_status,
+                                o.payment_method,
+                                o.payment_status,
+                                o.shipping_address,
+                                o.shipping_method,
+                                o.tracking_number,
+                                o.remark,
+                                o.create_time,
+                                o.update_time,
+                                o.pay_time,
+                                o.ship_time
+                              from t_order o left join sync_t_order so
+                                on o.order_id = so.order_id
+                              where so.order_id is not null and o.order_status != so.order_status
+                        ]]></sql>
+                </update>
+
+                <delete sourceKey="order_id" stageKey="id">
+                    <sql><![CDATA[
+                            select
+                                so.order_no,
+                                so.customer_name,
+                                so.customer_phone,
+                                so.customer_address,
+                                so.product_name,
+                                so.product_code,
+                                so.quantity,
+                                so.unit_price,
+                                so.total_amount,
+                                so.order_status,
+                                so.payment_method,
+                                so.payment_status,
+                                so.shipping_address,
+                                so.shipping_method,
+                                so.tracking_number,
+                                so.remark,
+                                so.create_time,
+                                so.update_time,
+                                so.pay_time,
+                                so.ship_time
+                            from t_order o right join sync_t_order so
+                                 on o.order_id = so.order_id
+                            where o.order_id is null
+                        ]]></sql>
+                </delete>
+
+            </execute>
+
+            <fieldMappings>
+                <mapping source="order_id" target="id"/>
+                <mapping source="order_no" target="order_number"/>
+                <mapping source="customer_name" target="customer_name"/>
+                <mapping source="customer_phone" target="customer_phone"/>
+                <mapping source="customer_address" target="customer_address"/>
+                <mapping source="product_name" target="product_name"/>
+                <mapping source="product_code" target="product_code"/>
+                <mapping source="quantity" target="quantity"/>
+                <mapping source="unit_price" target="unit_price"/>
+                <mapping source="total_amount" target="total_amount"/>
+                <mapping source="order_status" target="status"/>
+                <mapping source="payment_method" target="payment_method"/>
+                <mapping source="payment_status" target="payment_status"/>
+                <mapping source="shipping_address" target="shipping_address"/>
+                <mapping source="shipping_method" target="shipping_method"/>
+                <mapping source="tracking_number" target="tracking_number"/>
+                <mapping source="remark" target="remark"/>
+                <mapping source="create_time" target="created_at"/>
+                <mapping source="update_time" target="updated_at"/>
+                <mapping source="pay_time" target="paid_at"/>
+                <mapping source="ship_time" target="shipped_at"/>
+            </fieldMappings>
+
+        </task>
+
+        <task name="order_log_add">
+            <syncMode>ADD</syncMode>
+            <maxDataSize>500</maxDataSize>
+
+            <source table="t_order_log" pk="log_id"/>
+
+            <target table="order_logs" pk="id"/>
+
+            <fieldMappings>
+                <mapping source="log_id" target="id"/>
+                <mapping source="order_id" target="order_id"/>
+                <mapping source="order_no" target="order_number"/>
+                <mapping source="operation_type" target="operation_type"/>
+                <mapping source="operator_name" target="operator"/>
+                <mapping source="old_status" target="previous_status"/>
+                <mapping source="new_status" target="current_status"/>
+                <mapping source="operation_desc" target="description"/>
+                <mapping source="ip_address" target="ip_address"/>
+                <mapping source="create_time" target="created_at"/>
+            </fieldMappings>
+
+        </task>
+    </channel>
+</config>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <channel name="fast_sync_job">
+        <cron>0/5 * * * * ?</cron>
+        <concurrency>1</concurrency>
+        <dir>D:\test\</dir>
+        <successDir>D:\test\success</successDir>
+        <failDir>D:\test\fail</failDir>
+
+        <sequential>true</sequential>
+
+        <task name="order_sync">
+            <maxDataSize>500</maxDataSize>
+        </task>
+
+        <task name="order_log_add">
+            <maxDataSize>500</maxDataSize>
+        </task>
+    </channel>
+</config>
